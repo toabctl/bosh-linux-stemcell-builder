@@ -11,7 +11,7 @@ install_logrotate_conf() {
   # The logrotate.conf supplied by the default image is about to be stomped.
   # Make sure it hasn't changed. If it has changed, the contents of the new file should
   # evaluated to see if the replacement file should be updated.
-  echo "7e52df7373b42a36b2bdde9bc88315e828cdc61e  $chroot/etc/logrotate.conf" | sha1sum -c
+  echo "67281fca7e9b7e494498ec52a313bb23cf3d1f7e  $chroot/etc/logrotate.conf" | sha1sum -c
   cp "$assets_dir/ubuntu-logrotate.conf" "$chroot/etc/logrotate.conf"
 }
 
