@@ -69,16 +69,16 @@ those packages, or if you need to pull in and test an updated package from
 upstream.
 
     $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz]
+    $ bundle exec rake stemcell:build_os_image[ubuntu,focal,$PWD/tmp/ubuntu_base_image.tgz]
 
 The arguments to `stemcell:build_os_image` are:
 
 0. *`operating_system_name`* (`ubuntu`): identifies which type of OS to fetch.
    Determines which package repository and packaging tool will be used to
    download and assemble the files. Currently, only `ubuntu` is recognized.
-0. *`operating_system_version`* (`bionic`): an identifier that the system may use
+0. *`operating_system_version`* (`focal`): an identifier that the system may use
    to decide which release of the OS to download. Acceptable values depend on
-   the operating system. For `ubuntu`, use `bionic`.
+   the operating system. For `ubuntu`, use `focal`.
 0. *`os_image_path`* (`$PWD/tmp/ubuntu_base_image.tgz`): the path to write the
    finished OS image tarball to. If a file exists at this path already, it will
    be overwritten without warning.
@@ -91,7 +91,7 @@ changes on top of the base OS image such as new bosh-agent versions, or updating
 security configuration, or changing user settings.
 
     $ mkdir -p $PWD/tmp
-    $ bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz,"1.23"]
+    $ bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,focal,$PWD/tmp/ubuntu_base_image.tgz,"0.01"]
 
 The arguments to `stemcell:build_with_local_os_image` are:
 
@@ -101,7 +101,7 @@ The arguments to `stemcell:build_with_local_os_image` are:
    hypervisor to target.
 0. `operating_system_name` (`ubuntu`): Type of OS. Same as
    `stemcell:build_os_image`
-0. `operating_system_version` (`bionic`): OS release. Same as
+0. `operating_system_version` (`focal`): OS release. Same as
    `stemcell:build_os_image`
 0. `os_image_path` (`$PWD/tmp/ubuntu_base_image.tgz`): Path to base OS image
    produced in `stemcell:build_os_image`
@@ -122,15 +122,15 @@ the rake task the first time you create your docker container, but everytime
 after, as long as you do not destroy the container, you should be able to just
 run the specific tests.
 
-To run the `ubuntu_bionic_spec.rb` tests for example you will need to:
+To run the `ubuntu_focal_spec.rb` tests for example you will need to:
 
-* `bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz]`
+* `bundle exec rake stemcell:build_os_image[ubuntu,focal,$PWD/tmp/ubuntu_base_image.tgz]`
 * -update tests-
 
 Then run the following:
 
     cd /opt/bosh/bosh-stemcell
-    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_bionic_spec.rb
+    OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_focal_spec.rb
 
 ### How to run tests for Stemcell
 
@@ -142,7 +142,7 @@ container, you should be able to just run the specific tests.
 
 To run the stemcell tests when building against local OS image you will need to:
 
-* `bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz]`
+* `bundle exec rake stemcell:build_with_local_os_image[aws,xen,ubuntu,focal,$PWD/tmp/ubuntu_base_image.tgz]`
 * -make test changes-
 
 Then run the following:
@@ -152,8 +152,8 @@ Then run the following:
     STEMCELL_WORKDIR=/mnt/stemcells/aws/xen/ubuntu/work/work/chroot \
     OS_NAME=ubuntu \
     bundle exec rspec -fd --tag ~exclude_on_aws \
-    spec/os_image/ubuntu_bionic_spec.rb \
-    spec/stemcells/ubuntu_bionic_spec.rb \
+    spec/os_image/ubuntu_focal_spec.rb \
+    spec/stemcells/ubuntu_focal_spec.rb \
     spec/stemcells/go_agent_spec.rb \
     spec/stemcells/aws_spec.rb \
     spec/stemcells/stig_spec.rb \
@@ -209,14 +209,14 @@ If you find yourself debugging any of the above processes, here is what you need
    Example usage:
 
     ```shell
-    $ bundle exec rake stemcell:build_os_image[ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
+    $ bundle exec rake stemcell:build_os_image[ubuntu,focal,$PWD/tmp/ubuntu_base_image.tgz] resume_from=rsyslog_config
     ```
 0. `Directory renamed before its status could be extracted`
 
     If you run into the following error whilst builing an image with Docker:
     ```shell
-    ubuntu@98b2a2aed0e6:/opt/bosh$ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,bionic,$PWD/tmp/ubuntu_base_image.tgz,705]
-    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_bionic_spec.rb
+    ubuntu@98b2a2aed0e6:/opt/bosh$ bundle exec rake stemcell:build_with_local_os_image[vsphere,esxi,ubuntu,focal,$PWD/tmp/ubuntu_base_image.tgz,705]
+    cd /opt/bosh/bosh-stemcell; OS_IMAGE=/opt/bosh/tmp/ubuntu_base_image.tgz bundle exec rspec -fd spec/os_image/ubuntu_focal_spec.rb
     All stemcell_tarball tests are being skipped. STEMCELL_WORKDIR needs to be set
     All stemcell_image tests are being skipped. STEMCELL_IMAGE needs to be set
     Run options: exclude {:stemcell_image=>true, :stemcell_tarball=>true, :shellout_types=>true}
@@ -240,8 +240,8 @@ If you find yourself debugging any of the above processes, here is what you need
 
 ## External Assets
 
-The ovftool installer from VMWare can be found at
-[my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL410&productId=489).
+The ovftool installer version 4.4.1 from VMWare can be found at
+[my.vmware.com](https://my.vmware.com/group/vmware/details?downloadGroup=OVFTOOL441&productId=646).
 
 The ovftool installer must be copied into the [ci/docker/os-image-stemcell-builder](https://github.com/cloudfoundry/bosh-linux-stemcell-builder/tree/master/ci/docker/os-image-stemcell-builder) next to the Dockerfile or you will receive the error
 
