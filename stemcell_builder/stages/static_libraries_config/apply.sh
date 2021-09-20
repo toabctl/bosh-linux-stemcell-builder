@@ -9,7 +9,7 @@ source $base_dir/lib/prelude_bosh.bash
 cp -p "${assets_dir}/${DISTRIB_CODENAME}_static_libraries_list.txt" $chroot/var/vcap/bosh/etc/static_libraries_list
 
 if [[ "${DISTRIB_CODENAME}" == 'focal' ]]; then
-    major_kernel_version="5.4"
+    major_kernel_version="5.11"
 elif [[ "${DISTRIB_CODENAME}" == 'bionic' ]]; then
     major_kernel_version="5.4"
 else
