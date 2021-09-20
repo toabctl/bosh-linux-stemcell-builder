@@ -48,7 +48,14 @@ apt-get -y install build-essential
 apt-get -y install linux-headers-generic
 
 # stemcell image creation
-apt-get -y install debootstrap kpartx
+apt-get -y install kpartx
+wget http://launchpadlibrarian.net/535110497/debootstrap_1.0.95ubuntu0.9_all.deb -O debootstrap_1.0.95ubuntu0.9_all.deb
+dpkg -i debootstrap_1.0.95ubuntu0.9_all.deb
+# TODO: debootstrap 1.0.118 is provided byb focal
+#  this generated issues due to debootstrap in docker
+#  this version works http://launchpadlibrarian.net/535110497/debootstrap_1.0.95ubuntu0.9_all.deb
+#  we need to figure out why this breaks from version https://git.launchpad.net/ubuntu/+source/debootstrap/tree/debian/changelog#n235
+#  the problem is stated in this patch https://github.com/cloudfoundry/bosh-linux-stemcell-builder/blob/ubuntu-xenial/621.x/stemcell_builder/stages/base_debootstrap/assets/debootstrap.patch
 
 # stemcell uploading
 apt-get -y install s3cmd
