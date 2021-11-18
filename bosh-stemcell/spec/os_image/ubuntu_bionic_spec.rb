@@ -35,14 +35,13 @@ describe 'Ubuntu 18.04 OS image', os_image: true do
   end
 
   context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-18.04') do
-      it { should be_installed }
+    if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+      kernel_pkg_name = 'linux-aws-fips'
+    else
+      kernel_pkg_name = 'linux-generic-hwe-18.04'
     end
-  end
-
-  context 'installed by system_kernel' do
-    describe file('/etc/dracut.conf.d/10-debian.conf') do
-      its(:content) { should_not match '^add_drivers.*' }
+    describe package(kernel_pkg_name) do
+      it { should be_installed }
     end
   end
 
