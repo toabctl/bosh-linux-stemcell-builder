@@ -143,7 +143,4 @@ ua_enable_fips "${chroot}"
 install_and_hold_packages "${chroot}" "${FIPS_PKGS}"
 ua_detach "${chroot}"
 
-# FIXME: drop this later!
-install_and_hold_packages "${chroot}" "openssl1.0 libssl1.0.0"
-
 unmock_grub_probe "${chroot}"
