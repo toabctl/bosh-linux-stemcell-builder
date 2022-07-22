@@ -132,6 +132,17 @@ function unmock_grub_probe() {
     fi
 }
 
+function write_fips_cmdline_conf() {
+    local chroot=$1
+    echo "Checking for FIPS grub cmdline. If required, will write."
+    if [ ! -f "${chroot}/etc/default/grub.d/99-fips.cfg" ]; then
+        cat << "EOF" >> "${chroot}/etc/default/grub.d/99-fips.cfg"
+GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT fips=1"
+EOF
+    fi
+}
+
+
 # those packages need to be installed from the FIPS repo and hold
 FIPS_PKGS="openssh-client openssh-server openssl libssl1.1 libssl1.1-hmac libssl-dev fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev linux-image-aws-fips linux-aws-fips linux-headers-aws-fips fips-initramfs linux-modules-extra-4.15.0-2000-aws-fips"
 
@@ -141,6 +152,7 @@ mock_grub_probe "${chroot}"
 ua_attach "${chroot}"
 ua_enable_fips "${chroot}"
 install_and_hold_packages "${chroot}" "${FIPS_PKGS}"
+write_fips_cmdline_conf "${chroot}"
 ua_detach "${chroot}"
 
 unmock_grub_probe "${chroot}"
