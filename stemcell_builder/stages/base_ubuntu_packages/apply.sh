@@ -4,6 +4,7 @@ set -e
 
 base_dir=$(readlink -nf $(dirname $0)/../..)
 source $base_dir/lib/prelude_apply.bash
+source $base_dir/etc/settings.bash
 
 debs="libssl-dev lsof strace bind9-host dnsutils tcpdump iputils-arping \
 curl wget bison libreadline6-dev rng-tools \
@@ -82,8 +83,13 @@ run_in_chroot "${chroot}" "systemctl enable runit"
 run_in_chroot "${chroot}" "systemctl enable systemd-logind"
 run_in_chroot "${chroot}" "systemctl enable systemd-networkd"
 run_in_chroot "${chroot}" "systemctl disable systemd-resolved"
-pkgs_to_purge="iw mg wireless-regdb"
-pkg_mgr purge --auto-remove "$pkgs_to_purge"
+
+# FIPS kernel depends on crda so do not try to remove it
+if [ -z "${UBUNTU_ADVANTAGE_TOKEN}" ]; then
+    pkgs_to_purge="iw mg wireless-regdb"
+    pkg_mgr purge --auto-remove "$pkgs_to_purge"
+fi
+
 
 exclusions="postfix whoopsie apport"
 pkg_mgr purge --auto-remove $exclusions

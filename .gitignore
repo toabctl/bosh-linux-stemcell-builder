@@ -21,3 +21,7 @@ cscope.out
 ci/docker/VMware-ovftool-*.bundle
 
 wget-log*
+
+# TEMPORARY
+fips_sources.txt
+key.asc

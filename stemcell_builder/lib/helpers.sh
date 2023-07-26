@@ -30,6 +30,7 @@ function run_in_chroot {
     mount -n --bind /dev $chroot/dev
     mount -n --bind /dev/shm $chroot/dev/shm
     mount -n --bind /dev/pts $chroot/dev/pts
+    mount -n --bind /sys $chroot/sys
 
     mkdir -p $chroot/proc
     mount -n --bind /proc $chroot/proc

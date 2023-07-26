@@ -37,7 +37,14 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
   end
 
   context 'installed by system_kernel' do
-    describe package('linux-generic-hwe-22.04') do
+    if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+      #TODO use linux-aws-fips when package available
+      # kernel_pkg_name = 'linux-aws-fips'
+      kernel_pkg_name = 'linux-fips'
+    else
+      kernel_pkg_name = 'linux-generic-hwe-22.04'
+    end
+    describe package(kernel_pkg_name) do
       it { should be_installed }
     end
   end
@@ -88,15 +95,24 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
       expect(sshd_config.content).to match(/^Ciphers #{ciphers}$/)
     end
 
-    it 'allows only secure HMACs and the weaker SHA1 HMAC required by golang ssh lib' do
-      macs = %w[
-        hmac-sha2-512-etm@openssh.com
-        hmac-sha2-256-etm@openssh.com
-        umac-128-etm@openssh.com
-        hmac-sha2-512
-        hmac-sha2-256
-        umac-128@openssh.com
-      ].join(',')
+    it 'allows only secure HMACs' do
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        macs = %w[
+          hmac-sha2-512-etm@openssh.com
+          hmac-sha2-256-etm@openssh.com
+          hmac-sha2-512
+          hmac-sha2-256
+        ].join(',')
+      else
+        macs = %w[
+          hmac-sha2-512-etm@openssh.com
+          hmac-sha2-256-etm@openssh.com
+          umac-128-etm@openssh.com
+          hmac-sha2-512
+          hmac-sha2-256
+          umac-128@openssh.com
+        ].join(',')
+      end
       expect(sshd_config.content).to match(/^MACs #{macs}$/)
     end
   end
@@ -350,7 +366,43 @@ EOF
 
   describe 'allowed user accounts' do
     describe file('/etc/passwd') do
-      its(:content) { should eql(<<HERE) }
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        its(:content) { should eql(<<HERE) }
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:102:105::/nonexistent:/usr/sbin/nologin
+systemd-timesync:x:103:106:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+syslog:x:104:111::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+_chrony:x:106:112:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+uuidd:x:107:114::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:108:115::/nonexistent:/usr/sbin/nologin
+runit-log:x:999:999:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
+_runit-log:x:998:998:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
+sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
+usbmux:x:110:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
+HERE
+      else
+        its(:content) { should eql(<<HERE) }
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -383,10 +435,47 @@ _runit-log:x:998:998:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nolo
 sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
+      end
     end
 
     describe file('/etc/shadow') do
-      shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
+\Aroot:(.+):(\d{5}):0:99999:7:::
+daemon:\*:(\d{5}):0:99999:7:::
+bin:\*:(\d{5}):0:99999:7:::
+sys:\*:(\d{5}):0:99999:7:::
+sync:\*:(\d{5}):0:99999:7:::
+games:\*:(\d{5}):0:99999:7:::
+man:\*:(\d{5}):0:99999:7:::
+lp:\*:(\d{5}):0:99999:7:::
+mail:\*:(\d{5}):0:99999:7:::
+news:\*:(\d{5}):0:99999:7:::
+uucp:\*:(\d{5}):0:99999:7:::
+proxy:\*:(\d{5}):0:99999:7:::
+www-data:\*:(\d{5}):0:99999:7:::
+backup:\*:(\d{5}):0:99999:7:::
+list:\*:(\d{5}):0:99999:7:::
+irc:\*:(\d{5}):0:99999:7:::
+gnats:\*:(\d{5}):0:99999:7:::
+nobody:\*:(\d{5}):0:99999:7:::
+systemd-network:\*:(\d{5}):0:99999:7:::
+systemd-resolve:\*:(\d{5}):0:99999:7:::
+messagebus:\*:(\d{5}):0:99999:7:::
+systemd-timesync:\*:(\d{5}):0:99999:7:::
+syslog:\*:(\d{5}):0:99999:7:::
+_apt:\*:(\d{5}):0:99999:7:::
+_chrony:(.+):(\d{5}):0:99999:7:::
+uuidd:(.+):(\d{5}):0:99999:7:::
+tcpdump:\*:(\d{5}):0:99999:7:::
+runit-log:!:(\d{5})::::::
+_runit-log:!:(\d{5})::::::
+sshd:\*:(\d{5}):0:99999:7:::
+usbmux:\*:(\d{5}):0:99999:7:::
+vcap:(.+):(\d{5}):1:99999:7:::\Z
+END_SHADOW
+      else
+        shadow_match = Regexp.new <<'END_SHADOW', [Regexp::MULTILINE]
 \Aroot:(.+):(\d{5}):0:99999:7:::
 daemon:\*:(\d{5}):0:99999:7:::
 bin:\*:(\d{5}):0:99999:7:::
@@ -419,7 +508,7 @@ _runit-log:!:(\d{5})::::::
 sshd:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
-
+      end
       its(:content) { should match(shadow_match) }
     end
 

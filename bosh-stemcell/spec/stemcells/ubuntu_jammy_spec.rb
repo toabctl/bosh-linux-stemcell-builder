@@ -27,12 +27,20 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       it { should be_file }
       its(:content) { should match 'set default="0"' }
       its(:content) { should match(/^set root=\(hd0,0\)$/) }
-      its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-fips root=UUID=\S* ro } }
+      else
+        its(:content) { should match %r{linux\t/boot/vmlinuz-\S+-generic root=UUID=\S* ro } }
+      end
       its(:content) { should match ' selinux=0' }
       its(:content) { should match ' cgroup_enable=memory swapaccount=1' }
       its(:content) { should match ' console=ttyS0,115200n8' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
-      its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
+      if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
+      else
+        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
+      end
 
       it('should set the grub menu password (stig: V-38585)') { expect(subject.content).to match /password_pbkdf2 vcap/ }
       it('should be of mode 600 (stig: V-38583)') { expect(subject).to be_mode(0600) }
@@ -432,6 +440,7 @@ HERE
     # TODO: maby we can use awk "dpkg --get-selections | awk '!/linux-(.+)-([0-9]+.+)/&&/linux/{print $1}'"
 
     let(:dpkg_list_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy.txt')).map(&:chop) }
+    let(:dpkg_list_ubuntu_fips) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-fips.txt')).map(&:chop) }
     let(:dpkg_list_google_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-google-additions.txt')).map(&:chop) }
     let(:dpkg_list_vsphere_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-vsphere-additions.txt')).map(&:chop) }
     let(:dpkg_list_azure_ubuntu) { File.readlines(spec_asset('dpkg-list-ubuntu-jammy-azure-additions.txt')).map(&:chop) }
@@ -447,7 +456,11 @@ HERE
       exclude_on_softlayer: true,
     } do
       it 'contains only the base set of packages for alicloud, aws, openstack, warden' do
-        expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu)
+        if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
+          expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu_fips)
+        else
+          expect(subject.stdout.split("\n")).to match_array(dpkg_list_ubuntu)
+        end
       end
     end
 

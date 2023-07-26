@@ -5,6 +5,10 @@ disk image that is used as a template by a BOSH Director to create VMs.
 
 ## Quick Start: Building a Stemcell Locally
 
+### TEMPORARY
+- create a file in the root of the repository named `fips_sources.txt` with the deb source line (including your auth) as its sole contents
+- create a file in the root of the repository named `key.asc` with the ppas public key
+
 ```bash
 git clone git@github.com:cloudfoundry/bosh-linux-stemcell-builder.git
 cd bosh-linux-stemcell-builder
