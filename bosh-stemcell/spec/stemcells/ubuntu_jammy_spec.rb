@@ -37,7 +37,7 @@ describe 'Ubuntu 22.04 stemcell image', stemcell_image: true do
       its(:content) { should match ' console=ttyS0,115200n8' }
       its(:content) { should match ' earlyprintk=ttyS0 rootdelay=300' }
       if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
-        its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-fips} }
+        its(:content) { should match %r{initrd\t/boot/microcode.cpio /boot/initrd.img-\S+-fips} }
       else
         its(:content) { should match %r{initrd\t/boot/initrd.img-\S+-generic} }
       end

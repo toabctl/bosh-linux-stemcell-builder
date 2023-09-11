@@ -37,8 +37,8 @@ function ua_attach() {
     # overwrite the cloud type so the correct kernel gets installed
     # FIXME: do not hardcode aws here!
     # Uncomment the following lines when TEMPORARY block is removed/aws-fips-kernel is available
-    # echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
-    # echo "  cloud_type: aws" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
+    echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
+    echo "  cloud_type: aws" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
     run_in_chroot ${chroot} "ua attach --no-auto-enable ${UBUNTU_ADVANTAGE_TOKEN}"
 }
 
@@ -157,8 +157,7 @@ function unmock_grub_probe() {
 }
 
 # those packages need to be installed from the FIPS repo and hold
-FIPS_PKGS="openssh-client openssh-server openssl libssl3 libssl-dev fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev fips-initramfs"
-# TODO: linux-image-aws-fips linux-aws-fips linux-headers-aws-fips linux-modules-extra-4.15.0-2000-aws-fips
+FIPS_PKGS="openssh-client openssh-server openssl libssl3 libssl-dev linux-aws-fips linux-headers-aws-fips linux-image-aws-fips linux-modules-extra-5.15.0-1042-aws-fips fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev fips-initramfs"
 
 echo "Setting up Ubuntu Advantage ..."
 

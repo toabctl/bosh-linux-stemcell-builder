@@ -15,10 +15,9 @@ elif [[ "${DISTRIB_CODENAME}" == 'jammy' ]]; then
     if [ -z "${UBUNTU_ADVANTAGE_TOKEN}" ]; then
         major_kernel_version="6.2"
     else
-        # FIPS kernel is 4.15
+        # FIPS kernel is 5.15
         major_kernel_version="5.15"
-        # kernel_suffix="-aws-fips"
-        kernel_suffix="-fips"
+        kernel_suffix="-aws-fips"
     fi
 else
     major_kernel_version="4.15"

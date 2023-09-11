@@ -38,9 +38,7 @@ describe 'Ubuntu 22.04 OS image', os_image: true do
 
   context 'installed by system_kernel' do
     if ENV.key?("UBUNTU_ADVANTAGE_TOKEN")
-      #TODO use linux-aws-fips when package available
-      # kernel_pkg_name = 'linux-aws-fips'
-      kernel_pkg_name = 'linux-fips'
+      kernel_pkg_name = 'linux-aws-fips'
     else
       kernel_pkg_name = 'linux-generic-hwe-22.04'
     end
