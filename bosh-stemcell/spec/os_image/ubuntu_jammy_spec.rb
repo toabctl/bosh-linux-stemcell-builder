@@ -396,7 +396,6 @@ tcpdump:x:108:115::/nonexistent:/usr/sbin/nologin
 runit-log:x:999:999:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 _runit-log:x:998:998:Created by dh-sysuser for runit:/nonexistent:/usr/sbin/nologin
 sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
-usbmux:x:110:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
 vcap:x:1000:1000:BOSH System User:/home/vcap:/bin/bash
 HERE
       else
@@ -469,7 +468,6 @@ tcpdump:\*:(\d{5}):0:99999:7:::
 runit-log:!:(\d{5})::::::
 _runit-log:!:(\d{5})::::::
 sshd:\*:(\d{5}):0:99999:7:::
-usbmux:\*:(\d{5}):0:99999:7:::
 vcap:(.+):(\d{5}):1:99999:7:::\Z
 END_SHADOW
       else

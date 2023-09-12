@@ -36,7 +36,6 @@ function ua_attach() {
 
     # overwrite the cloud type so the correct kernel gets installed
     # FIXME: do not hardcode aws here!
-    # Uncomment the following lines when TEMPORARY block is removed/aws-fips-kernel is available
     echo "settings_overrides:" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
     echo "  cloud_type: aws" >> ${chroot}/etc/ubuntu-advantage/uaclient.conf
     run_in_chroot ${chroot} "ua attach --no-auto-enable ${UBUNTU_ADVANTAGE_TOKEN}"
@@ -60,11 +59,8 @@ function ua_detach() {
 
 function ua_enable_fips() {
     local chroot=$1
-    # TEMPORARY. PRIVATE REPO ONLY. DO NOT MERGE
-    run_in_chroot ${chroot} "apt install --assume-yes ubuntu-fips"
-    # END TEMPORARY
-    # Uncomment the following line when TEMPORARY block is removed
-    #run_in_chroot ${chroot} "ua enable --assume-yes fips"
+    # Uncomment the following line when fips is available in ua client
+    # run_in_chroot ${chroot} "ua enable --assume-yes fips"
 }
 
 
