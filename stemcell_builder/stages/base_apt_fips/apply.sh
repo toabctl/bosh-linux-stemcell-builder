@@ -152,6 +152,13 @@ function unmock_grub_probe() {
     fi
 }
 
+
+function write_fips_cmdline_conf() {
+    cat << "EOF" >> "${chroot}/etc/default/grub.d/99-fips.cfg"
+GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT fips=1"
+EOF
+}
+
 # those packages need to be installed from the FIPS repo and hold
 FIPS_PKGS="openssh-client openssh-server openssl libssl3 libssl-dev linux-aws-fips linux-headers-aws-fips linux-image-aws-fips linux-modules-extra-5.15.0-1042-aws-fips fips-initramfs libgcrypt20 libgcrypt20-hmac libgcrypt20-dev fips-initramfs"
 
@@ -160,6 +167,7 @@ echo "Setting up Ubuntu Advantage ..."
 mock_grub_probe "${chroot}"
 ua_attach "${chroot}"
 ua_enable_fips "${chroot}"
+write_fips_cmdline_conf
 install_and_hold_packages "${chroot}" "${FIPS_PKGS}"
 ua_detach "${chroot}"
 
