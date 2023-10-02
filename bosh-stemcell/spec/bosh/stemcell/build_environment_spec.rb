@@ -207,7 +207,7 @@ module Bosh::Stemcell
           "OS_NAME=#{operating_system.name}",
           "OS_VERSION=#{operating_system.version}",
           "CANDIDATE_BUILD_NUMBER=#{version}",
-          "bundle exec rspec -fd --tag fips",
+          "bundle exec rspec -fd --tag ~exclude_on_fips",
           "spec/os_image/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/#{operating_system.name}_#{operating_system.version}_spec.rb",
           "spec/stemcells/go_agent_spec.rb",

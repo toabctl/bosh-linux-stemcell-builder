@@ -14,6 +14,14 @@ module Bosh::Stemcell
       ubuntu_os_stages
     end
 
+    def kernel_stages
+      if operating_system.variant == "fips"
+        %I[system_#{infrastructure.name}_fips_kernel base_fips_apt system_kernel_modules]
+      else
+        %i[system_kernel system_kernel_modules]
+      end
+    end
+
     def extract_operating_system_stages
       [
         :untar_base_os_image,
@@ -250,7 +258,7 @@ module Bosh::Stemcell
         :base_apt,
         :base_ubuntu_build_essential,
         :base_ubuntu_packages,
-        :base_apt_fips,
+        :base_fips_apt,
         :base_file_permission,
         :base_ssh,
         :bosh_sysstat,
